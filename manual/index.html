@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LL Manual</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LL Manual">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1A0A02">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<style>
+  html,body{margin:0;height:100%;background:#FBF6E9;overflow:hidden}
+  /* franja café detrás de la hora/batería del iPhone */
+  #topSafe{position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:#1A0A02;z-index:2}
+  #probe{position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+  iframe{position:fixed;left:0;width:100%;border:0;background:#FBF6E9;top:env(safe-area-inset-top);height:calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+</style>
+</head>
+<body>
+<div id="topSafe"></div><div id="probe"></div>
+<!-- ▼▼▼ PEGA AQUÍ el link de la app (Apps Script → Implementar → termina en /exec) ▼▼▼ -->
+<iframe id="app" src="https://script.google.com/macros/s/AKfycbwLXZpXr9feWmMar1XtN_-WWShA9GhIjbQ7FO5P72OqfJzJpx45HgJUFIiLwPAzpStP2g/exec" allow="clipboard-write; screen-wake-lock" title="LL Manual"></iframe>
+<script>
+  // Acomoda la app exacta entre la barra de arriba y la de abajo en cualquier celular o tablet
+  function fit(){
+    var p=getComputedStyle(document.getElementById('probe'));
+    var top=parseFloat(p.paddingTop)||0, bot=parseFloat(p.paddingBottom)||0;
+    var full=window.navigator.standalone ? Math.max(window.innerHeight, screen.height) : window.innerHeight;
+    var f=document.getElementById('app');
+    f.style.top=top+'px'; f.style.height=(full-top-bot)+'px';
+    document.getElementById('topSafe').style.height=top+'px';
+  }
+  fit(); addEventListener('resize',fit); addEventListener('orientationchange',function(){setTimeout(fit,300)});
+</script>
+</body>
+</html>
