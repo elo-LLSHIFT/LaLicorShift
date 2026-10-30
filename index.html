@@ -8,17 +8,43 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="LaLicorShift">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#123D27">
+<meta name="theme-color" content="#1F3B2C">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
 <style>
-  html,body{margin:0;height:100%;background:#123D27}
-  iframe{position:fixed;inset:0;width:100%;height:100%;border:0;background:#fff}
+  html,body{margin:0;height:100%;background:#fff;overflow:hidden}
+  /* green strip behind the iPhone clock/battery, white strip behind the home bar */
+  #topSafe{position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:#1F3B2C;z-index:2}
+  #probe{position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+  iframe{position:fixed;left:0;width:100%;border:0;background:#F4F1EA;top:env(safe-area-inset-top);height:calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
 </style>
 </head>
 <body>
-<iframe src="https://script.google.com/macros/s/AKfycbykFNzu0hDRYfbX5m-W_weJqjucbF_1GVtXBxMsd6HbOWDzexdT-7mkyORvFKaa6CQ/exec"
+<div id="topSafe"></div><div id="probe"></div>
+<iframe id="app" src="https://script.google.com/macros/s/AKfycbykFNzu0hDRYfbX5m-W_weJqjucbF_1GVtXBxMsd6HbOWDzexdT-7mkyORvFKaa6CQ/exec"
         allow="clipboard-write" title="LaLicorShift"></iframe>
+<script>
+  // Fit the app exactly between the status bar and the home bar on any phone
+  function fit(){
+    var p=getComputedStyle(document.getElementById('probe'));
+    var top=parseFloat(p.paddingTop)||0, bot=parseFloat(p.paddingBottom)||0;
+    var full=window.navigator.standalone ? Math.max(window.innerHeight, screen.height) : window.innerHeight;
+    var f=document.getElementById('app');
+    f.style.top=top+'px'; f.style.height=(full-top-bot)+'px';
+    document.getElementById('topSafe').style.height=top+'px';
+  }
+  // Remember the session and language for the app inside (Safari may wipe the app frame's own storage)
+  var KEEP=['ls_token','ls_lang','ls_tour'];
+  function okOrigin(o){return /\.googleusercontent\.com$/.test(o)||/^https:\/\/script\.google\.com$/.test(o);}
+  addEventListener('message',function(ev){var d=ev.data;if(!d||d.lls!==1||!okOrigin(ev.origin))return;
+    try{
+      if(d.op==='get'){var out={};KEEP.forEach(function(k){var v=localStorage.getItem('lls_'+k);if(v)out[k]=v;});ev.source.postMessage({lls:1,op:'state',data:out},ev.origin);}
+      else if(d.op==='set'&&KEEP.indexOf(d.k)>=0){localStorage.setItem('lls_'+d.k,String(d.v));}
+      else if(d.op==='del'&&KEEP.indexOf(d.k)>=0){localStorage.removeItem('lls_'+d.k);}
+    }catch(e){}
+  });
+  fit(); addEventListener('resize',fit); addEventListener('orientationchange',function(){setTimeout(fit,300)});
+</script>
 </body>
 </html>
