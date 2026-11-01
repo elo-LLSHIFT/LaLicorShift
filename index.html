@@ -28,10 +28,14 @@
   // Fit the app exactly between the status bar and the home bar on any phone
   function fit(){
     var p=getComputedStyle(document.getElementById('probe'));
-    var top=parseFloat(p.paddingTop)||0, bot=parseFloat(p.paddingBottom)||0;
-    var full=Math.min(window.innerHeight||9999, document.documentElement.clientHeight||9999);   // the real visible height (screen.height overshoots on some iPhones)
+    var sTop=parseFloat(p.paddingTop)||0, sBot=parseFloat(p.paddingBottom)||0;
+    var h=Math.min(window.innerHeight||9999, document.documentElement.clientHeight||9999);
+    // Only leave room for the clock/battery if the page really goes under them (full-screen app);
+    // otherwise iOS already starts the page below the status bar.
+    var under=(screen.height-h)<=sTop/2;
+    var top=under?sTop:0, bot=Math.min(sBot,20);
     var f=document.getElementById('app');
-    f.style.top=top+'px'; f.style.height=(full-top-bot)+'px';
+    f.style.top=top+'px'; f.style.height=(h-top-bot)+'px';
     document.getElementById('topSafe').style.height=top+'px';
   }
   // Remember the session and language for the app inside (Safari may wipe the app frame's own storage)
