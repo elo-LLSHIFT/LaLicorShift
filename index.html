@@ -22,9 +22,12 @@
 </head>
 <body>
 <div id="topSafe"></div><div id="probe"></div>
-<iframe id="app" src="https://script.google.com/macros/s/AKfycbykFNzu0hDRYfbX5m-W_weJqjucbF_1GVtXBxMsd6HbOWDzexdT-7mkyORvFKaa6CQ/exec"
-        allow="clipboard-write" title="LaLicorShift"></iframe>
+<iframe id="app" allow="clipboard-write; geolocation" title="LaLicorShift"></iframe>
 <script>
+  // Open the app; the kitchen QR adds ?p=… (time clock) and it is passed on to the app
+  (function(){var APP='https://script.google.com/macros/s/AKfycbykFNzu0hDRYfbX5m-W_weJqjucbF_1GVtXBxMsd6HbOWDzexdT-7mkyORvFKaa6CQ/exec';
+    var p=(location.search.match(/[?&]p=([A-Za-z0-9]{6,32})/)||[])[1];
+    document.getElementById('app').src=APP+(p?'?p='+p:'');})();
   // Fit the app exactly between the status bar and the home bar on any phone
   function fit(){
     var p=getComputedStyle(document.getElementById('probe'));
